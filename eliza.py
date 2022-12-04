@@ -1,6 +1,8 @@
 import random
 import time
 import sys
+import string
+
 
 # Some words used for creating in context responses
 words_swap = {
@@ -307,8 +309,6 @@ def get_input():
     text = input()
 
     # Clean the input by removing some characters
-    #text = text.replace('"', '').replace("'", '').replace("?", ' ').replace(".", ' ').replace(",", ' ').replace(";", ' ')
-
     for char in ['"', "'"]:
         text = text.replace(char,'')
     for char in ['.',',',';','?','!']:
@@ -324,8 +324,7 @@ def process_input(text):
     global prev_input
 
     if prev_input != None and text == prev_input:
-        print("PLEASE DON'T REPEAT YOURSELF!")
-        return { "command": COMMAND_RESPONSE, "reply": "O.K. IF YOU FEEL THAT WAY I'LL SHUT UP...."}
+        return { "command": COMMAND_RESPONSE, "reply": "PLEASE DON'T REPEAT YOURSELF!"}
 
     # Keep track of the last input to check for repetitions
     prev_input = text
@@ -373,17 +372,45 @@ def process_input(text):
 
 
 # Print replay on screen
-def print_message(message, delay=0.025):
-    
+def print_message(message, delay=0.025, error_delay=0.5):
+
     if delay <= 0:
         print("> " + message)
-    else:
+        return
+
+    if error_delay <= 0:
         message = "> " + message  
         for c in message:
             sys.stdout.write(c)
             sys.stdout.flush()
             time.sleep(delay)
         print()
+        return
+
+
+    print("> ", end='')
+    output = ""
+    error_flag = False
+    while True:
+        if output == message:
+            break
+        else:
+            if error_flag:
+                # Fix the typing error
+                time.sleep(error_delay)
+                print(end='\x1b[2K')
+                output = output[:-1]
+                error_flag = False
+            else:
+                if random.randint(0, 99) < 99:
+                    output += message[len(output)]
+                else:
+                    # Create an error in typing
+                    output = output + random.choice(string.ascii_letters).upper()
+                    error_flag = True
+            print("> " + output, end='\r')
+            time.sleep(delay)
+    print()
 
 
 # Main entry point

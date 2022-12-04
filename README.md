@@ -3,7 +3,9 @@
 
 #### Description:
 This is a Python implementation of one of the most know chatbots.
+
 I first played with Eliza en a C64 many years ago and coded on C and later CPP and Java but to be honest, Python is really powerfull to handle data make things easier.
+
 In the docs folder there are other implementatios as reference so it is possible to compare how much you get using the right tool for the right job.
 
 
@@ -24,6 +26,7 @@ Being this the deliverable for the Final Project, lets complete the requirements
 ### What will your software do? What features will it have? How will it be executed?
 
 This is an implementation of the Eliza chatboch. It simulates the interaction with a psichoanalyst so, the bot do questions and you will answer.
+
 The bot will try to identify keywords on your input to create a contextual dialogue.
 To execute it be sure you have a valid Python installation on your computer and run:
 
@@ -78,3 +81,29 @@ HI! I'M ELIZA. WHAT'S YOUR PROBLEM?
 < COMPUTER
 > ARE YOU TALKING ABOUT ME IN PARTICULAR?
 ~~~~
+
+
+
+
+
+### Still curious?
+
+Ok. Let me explain a bit more in detail the implementation.
+There are two big groups: Data and logic.
+
+#### Data
+Data includes a dictionary of keywords that Eliza will try to identify in the user input.
+Based on that will choose one reply from the available related list.
+
+The other set of data include words used to create a more natural dialog by swapping some verbs and prepositions between first and thrid person.
+
+
+#### Logic
+There are three steps: Get the user Input, Generate a reply and Output tje reply.
+
+In the first part we get the user input and cleaning some characters to make easier the next step.
+
+In the second part of the process, we try to identify a valid keyword in the input. If it is not possible then a generic reply will be selected.
+After that based on the reply some will require some composition to again create e more natural interaction and from the original input some words will be swapped from our swap list like verbs and prepositions.
+
+The last and final step will print in a fancy way the generated reply to simulate keyboard typing.

@@ -1,15 +1,7 @@
 import random
 
 
-keywords = ["CAN YOU","CAN I","YOU ARE","YOURE","I DONT","I FEEL",
-"WHY DONT YOU","WHY CANT I","ARE YOU","I CANT","I AM","IM",
-"YOU","I WANT","WHAT","HOW","WHO","WHERE","WHEN","WHY",
-"NAME","CAUSE","SORRY","DREAM","HELLO","HI","MAYBE",
-"NO","YOUR","ALWAYS","THINK","ALIKE","YES","FRIEND",
-"COMPUTER","SPORTS","BOOK","BOOKS","MONEY","NOKEYFOUND"]
-
-
-#   used for creating in context responses
+# Some words used for creating in context responses
 words_swap = {
     "ARE": "AM",
     "WERE": "WAS",
@@ -27,7 +19,7 @@ words_swap = {
     "YOURE": "I'M"
 }
 
-#   Replies based on the keyword found
+# Dictionary and Replies based on the keyword found
 replies = {
     "CAN YOU": [
         "DON'T YOU BELIEVE THAT I CAN.",
@@ -284,24 +276,30 @@ replies = {
     ]
 }
 
+# Used to keep track of repetitions in user input
 prev_input = None
+
+# Used when no word from the dictionary was found on the user input
 NO_KEY_FOUND = "NOKEYFOUND"
+
+# Commands identified fron input analysis
+COMMAND_RESPONSE = "RESPONSE"
+COMMAND_QUIT = "QUIT"
 
 
 def initialize():
     print("*** ELIZA / DOCTOR ***")
     print("CREATED BY JOSEPH WEIZENBAUM")
     print("This Python version was ported by Walter Palladino")
-    print("On December 2022 inspired on sevral implementations on BASICs, C and Python")
+    print("On December 2022 inspired on several implementations on BASICs, C and Python")
+    print()
+    print("You can stop the program using words like BYE, SHUT UP or just Ctrl + C :)")
     print()
     print("HI! I'M ELIZA. WHAT'S YOUR PROBLEM?")
     print()
-    return
 
 
 def get_input():
-
-    global prev_input
 
     text = input()
 
@@ -311,18 +309,27 @@ def get_input():
     text = text.replace('"', '').replace("'", '')
     text = text.upper()
 
+    return text
+
+
+def process_input(text):
+
+    global prev_input
+
     if prev_input != None and text == prev_input:
         print("PLEASE DON'T REPEAT YOURSELF!")
-        return []
+        return { "command": COMMAND_RESPONSE, "reply": "O.K. IF YOU FEEL THAT WAY I'LL SHUT UP...."}
 
     prev_input = text
 
+    if any(bye in text for bye in ["SHUT", "BYE"]):
+        return { "command": COMMAND_QUIT, "reply": "O.K. IF YOU FEEL THAT WAY I'LL SHUT UP...."}
+
     # Parse the input looking for keywords 
     words_found = []
-    for keyword in keywords:
+    for keyword, data in replies.items():
         if text.find(keyword) > -1:
             words_found.append(keyword)
-            #print("Word Found : " + keyword)
     
     # If no keyword was found the last entry NOKEYFOUND will be used
     if len(words_found) == 0:
@@ -334,7 +341,7 @@ def get_input():
     response_idx = random.randint(0, len(replies[words_found[0]]) - 1)
     response = replies[words_found[0]][response_idx]
 
-    # Check if the replay should be composed
+    # Check if the reply should be composed
     if response[-1] != "*":
         reply += response
     else:
@@ -351,15 +358,15 @@ def get_input():
 
         reply += "?"
 
-    print("> " + reply)
-
-    return text.upper().split()
+    return {"command": COMMAND_RESPONSE, "reply": reply}
 
 
-def respond():
-    return
+# Print replay on screen
+def respond(message):
+    print("> " + message)
 
 
+# Main entry point
 if __name__ == "__main__":
 
     initialize()
@@ -367,9 +374,11 @@ if __name__ == "__main__":
     while True:
         # Get user inputs
         print("< ", end='')
-        commands = get_input()
-        respond()
-        if any(bye in ["SHUT", "BYE"] for bye in commands):
-            #if "SHUT" in command:
-            print("O.K. IF YOU FEEL THAT WAY I'LL SHUT UP....")
+        text = get_input()
+        # Process the input
+        result = process_input(text)
+        # Display the result
+        respond(result["reply"])
+        # If chooses to quit then end the program
+        if result["command"] == COMMAND_QUIT:
             quit()

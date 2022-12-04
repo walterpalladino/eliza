@@ -306,8 +306,7 @@ def get_input():
 
     text = input()
 
-    #   Clean the input string
-    #   Remove single and double quotes from string
+    #   Remove single and double quotes from the input
     text = text.replace('"', '').replace("'", '')
     text = text.upper()
 
@@ -322,8 +321,10 @@ def process_input(text):
         print("PLEASE DON'T REPEAT YOURSELF!")
         return { "command": COMMAND_RESPONSE, "reply": "O.K. IF YOU FEEL THAT WAY I'LL SHUT UP...."}
 
+    # Keep track of the last input to check for repetitions
     prev_input = text
 
+    # Check if the user wants to leave?
     if any(bye in text for bye in ["SHUT", "BYE"]):
         return { "command": COMMAND_QUIT, "reply": "O.K. IF YOU FEEL THAT WAY I'LL SHUT UP...."}
 
@@ -356,8 +357,9 @@ def process_input(text):
         stripped_text = text[text.find(words_found[0]) + len(words_found[0]):]
         stripped_text = stripped_text.strip()
 
+        # Clean and format reply
         reply += " " + stripped_text
-
+        # Complete the reply format by adding an interrogation character at the end
         reply += "?"
 
     return {"command": COMMAND_RESPONSE, "reply": reply}

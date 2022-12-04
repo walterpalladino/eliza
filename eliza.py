@@ -306,8 +306,14 @@ def get_input():
 
     text = input()
 
-    #   Remove single and double quotes from the input
-    text = text.replace('"', '').replace("'", '')
+    # Clean the input by removing some characters
+    #text = text.replace('"', '').replace("'", '').replace("?", ' ').replace(".", ' ').replace(",", ' ').replace(";", ' ')
+
+    for char in ['"', "'"]:
+        text = text.replace(char,'')
+    for char in ['.',',',';','?','!']:
+        text = text.replace(char,' ')
+
     text = text.upper()
 
     return text
@@ -349,16 +355,17 @@ def process_input(text):
         reply += response
     else:
         reply += response[:-1]
-        if words_found[0] in words_swap:
-            if reply.find(words_found[0]) >= 0:
-                reply = reply.replace(words_found[0], words_swap[words_found[0]])
 
         #   Strip the original text to compose the reply
         stripped_text = text[text.find(words_found[0]) + len(words_found[0]):]
-        stripped_text = stripped_text.strip()
+        stripped_text = stripped_text.strip() + " "
+
+        for word in words_swap:
+            if stripped_text.find(" " + word + " ") >= 0:
+                stripped_text = stripped_text.replace(word, words_swap[word])
 
         # Clean and format reply
-        reply += " " + stripped_text
+        reply += " " + stripped_text.strip()
         # Complete the reply format by adding an interrogation character at the end
         reply += "?"
 

@@ -1,5 +1,6 @@
 import random
-
+import time
+import sys
 
 # Some words used for creating in context responses
 words_swap = {
@@ -301,11 +302,12 @@ def initialize():
 
 def get_input():
 
+    print("< ", end='')
+
     text = input()
 
     #   Clean the input string
     #   Remove single and double quotes from string
-    #text = "  " + text + "  "
     text = text.replace('"', '').replace("'", '')
     text = text.upper()
 
@@ -362,8 +364,17 @@ def process_input(text):
 
 
 # Print replay on screen
-def respond(message):
-    print("> " + message)
+def print_message(message, delay=0.025):
+    
+    if delay <= 0:
+        print("> " + message)
+    else:
+        message = "> " + message  
+        for c in message:
+            sys.stdout.write(c)
+            sys.stdout.flush()
+            time.sleep(delay)
+        print()
 
 
 # Main entry point
@@ -373,12 +384,11 @@ if __name__ == "__main__":
     
     while True:
         # Get user inputs
-        print("< ", end='')
         text = get_input()
         # Process the input
         result = process_input(text)
         # Display the result
-        respond(result["reply"])
+        print_message(result["reply"])
         # If chooses to quit then end the program
         if result["command"] == COMMAND_QUIT:
             quit()
